@@ -6,10 +6,20 @@ pipeline {
     }
 
     stages {
-        stage('Build') {
-            steps {
-                echo "Building ${env.APP_NAME}..."
-                sh "docker build -t ${APP_NAME}:${BUILD_NUMBER} ."
+        stage('Build & scan') {
+            parallel {
+                stage('Build') {
+                    steps {
+                        echo "Building ${env.APP_NAME}..."
+                        sh "docker build -t ${APP_NAME}:${BUILD_NUMBER} ."
+                    }
+                }
+                stage('Scan') {
+                    steps {
+                        echo "Scanning ${env.APP_NAME} for vulnerabilities..."
+                        // Scan steps here (e.g. Trivy) — placeholder for now
+                    }
+                }                
             }
         }
 
