@@ -1,3 +1,5 @@
+@Library('my-shared-library') _
+
 pipeline {
     agent any
 
@@ -25,8 +27,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                echo 'Testing...'
-                // Test steps here
+                runTest()
             }
         }
 
