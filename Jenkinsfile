@@ -27,7 +27,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                runTest()
+                runTests()
             }
         }
 
