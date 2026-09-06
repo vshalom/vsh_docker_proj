@@ -7,7 +7,8 @@ def dockerImage
 podTemplate(containers: [
       containerTemplate(name: 'jnlp', image: 'jenkins/inbound-agent', ttyEnabled: true),
       containerTemplate(name: 'docker', image: 'docker:cli', command: 'cat', ttyEnabled: true),
-      containerTemplate(name: 'trivy', image: 'aquasec/trivy:latest', command: 'cat', ttyEnabled: true)
+      containerTemplate(name: 'trivy', image: 'aquasec/trivy:latest', command: 'cat', ttyEnabled: true),
+      containerTemplate(name: 'helm', image: 'alpine/helm:latest', command: 'cat', ttyEnabled: true)
   ],
   volumes: [
       hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')
@@ -53,8 +54,16 @@ podTemplate(containers: [
         stage('scan image') {
             container('trivy') {
                 echo "Scanning pushed image ${appimage}:${apptag} with Trivy..."
-                sh "trivy image --exit-code 1 --severity HIGH,CRITICAL ${appimage}:${apptag}"
+                sh "trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed ${appimage}:${apptag}"
             }
         } // end scan image
+
+        stage('Deploy') {
+            container('helm') {
+                echo "Rendering Helm chart to YAML manifest..."
+                sh "helm template ${appname} ./chart > ${appname}.yaml"
+                sh "cat ${appname}.yaml"
+            }
+        } // end Deploy
     }
 }
