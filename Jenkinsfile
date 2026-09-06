@@ -1,4 +1,4 @@
-def appname = "vsh_docker_proj"
+def appname = "vsh-docker-proj"
 def repo = "vshalom"
 def appimage = "${repo}/${appname}"
 def apptag = "${env.BUILD_NUMBER}"
